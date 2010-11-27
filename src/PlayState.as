@@ -30,7 +30,7 @@ package
 		private var _monitors_display:FlxText;
 		
 		private var _renderers:Vector.<Renderer>;
-		private var _curRenderer:int = 0;
+		private var _curRenderer:int = 3;
 		
 		//}
 		
@@ -43,7 +43,7 @@ package
 			_monitors_display.color = 0xff0000;
 
 			_renderers = new Vector.<Renderer>();
-			_renderers[0] = new MBRenderer0(FlxG.width, FlxG.height, 128, 1.0, 0.4, 0.8);
+			_renderers[0] = new MBRenderer0(FlxG.width, FlxG.height, 32, 1.0, 0.4, 0.8);
 			_renderers[1] = new MBRenderer1(FlxG.width, FlxG.height);
 			_renderers[2] = new MBRenderer2(FlxG.width, FlxG.height);
 			_renderers[3] = new MBRendererSbat(FlxG.width, FlxG.height, 25);
