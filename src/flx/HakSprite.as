@@ -3,8 +3,7 @@ package flx {
 	import org.flixel.FlxSprite;
 	
 	/**
-	 * Version spéciale de FlxSprite qui optimise la méthode draw()
-	 * @author Saladin
+	 * Special version of FlxSprite that optimizes the draw() method
 	 */
 	public class HakSprite extends FlxSprite{
 

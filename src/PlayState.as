@@ -1,26 +1,21 @@
 package
 {
 	import bounds.OBB;
-	import flash.display.BitmapData;
-	import flash.text.TextField;
-	import flx.HakSprite;
 	import org.flixel.*;
-	import org.flixel.data.FlxConsole;
-	import particles.FluidParticle;
-	import particles.FluidParticles;
 	import particles.ParticleEmitter;
 	import particles.ParticleSystem;
+	import renderers.MBRenderer0;
+	import renderers.MBRenderer1;
+	import renderers.MBRenderer2;
+	import renderers.MBRendererSbat;
+	import renderers.Renderer;
 	import simulation.CollisionResolver;
 	import simulation.SPHSimulation;
 	import utils.Vector2;
-	import flash.utils.getTimer;
-
+	
 	public class PlayState extends FlxState
 	{
-		static private const P_RADIUS:int = 128;
-		
 		//{ Members
-		
 		private var update_interval:Number = Constants.DELTA_TIME_SEC;
 		private var elapsed:Number = 0;
 
@@ -31,70 +26,29 @@ package
 
 		// BoundingVolumes
 		private var collisionSolver:CollisionResolver;
-		
-		private var bitmapData:BitmapData;
-		private var sprite:HakSprite;
-		private var mbValues:Vector.<int>;
-		private var pSprite:FlxSprite;
 
 		private var _monitors_display:FlxText;
+		
+		private var _renderers:Vector.<Renderer>;
+		private var _curRenderer:int = 0;
 		
 		//}
 		
 		//{ Initialization
-		
-		public function PlayState() {
-			//this.console = FlxFluids.Instance.console;
-		}
-		
+
 		override public function create():void {
-			sprite = new HakSprite;
-			sprite.createGraphic(FlxG.width, FlxG.height);
-			add(sprite);
-			
 			add(_monitors_display = new FlxText(FlxG.width - 200, FlxG.height - 300, 200));
 			_monitors_display.alpha = 0.5;
 			_monitors_display.setFormat("system", 8, 0xffffff, "right");
-			
-			bitmapData = sprite.pixels;
-			mbValues = new Vector.<int>(FlxG.width * FlxG.height, true);
+			_monitors_display.color = 0xff0000;
 
-			initPSprite(P_RADIUS, 1.0, 0.4, 0.8);
-			
+			_renderers = new Vector.<Renderer>();
+			_renderers[0] = new MBRenderer0(FlxG.width, FlxG.height, 128, 1.0, 0.4, 0.8);
+			_renderers[1] = new MBRenderer1(FlxG.width, FlxG.height);
+			_renderers[2] = new MBRenderer2(FlxG.width, FlxG.height);
+			_renderers[3] = new MBRendererSbat(FlxG.width, FlxG.height, 25);
+
 			initSimulation();
-		}
-		
-		private function initPSprite(texSize:int, energy:Number, fallOff:Number, energyThreshold:Number):void {
-			pSprite = new FlxSprite().createGraphic(texSize, texSize);
-			var bitmap:BitmapData = pSprite.pixels;
-			
-			var center:int = texSize / 2;
-			var centerHalfSq:Number = (center / 2.0) * fallOff;
-			centerHalfSq = centerHalfSq * centerHalfSq;
-			var threshMax:Number = energyThreshold - (energyThreshold * 0.1);
-			
-			bitmap.lock();
-			var dist:Vector2 = new Vector2;
-			for (var x:uint = 0; x < texSize; x++) {
-				for (var y:uint = 0; y < texSize; y++) {
-					// calculate the squared distance from the center of the metaball
-					dist.x = x - center;
-					dist.y = y - center;
-					// Use gaussian as falloff function: e^-(d / (center/2))^2*energy
-					var en:Number = Math.exp( -dist.LengthSquared / centerHalfSq) * energy;
-					
-					// clamp
-					if (en < 0) en = 0;
-					else if (en > threshMax) en = threshMax;
-					
-					bitmap.setPixel32(x, y, getARGB(int(en * 255.0), 0, 255, 255));
-				}
-			}
-			bitmap.unlock();
-		}
-		
-		public static function getARGB(alpha:uint, red : uint , green : uint , blue :uint):uint {
-			return (Math.min(alpha, 255) << 24 | Math.min(red, 255) << 16 | Math.min(green, 255) << 8 | Math.min(blue, 255));
 		}
 
 		private function initSimulation():void {
@@ -142,12 +96,13 @@ package
 		//{ Update
 		
 		override public function update():void {
-			simulate();
-		}
 
-		override public function postProcess():void {
-			_monitors_display.text = FlxFluids.Monitors.toString();
-			super.postProcess();
+			if (FlxG.keys.pressed("ONE")) _curRenderer = 0;
+			else if (FlxG.keys.pressed("TWO")) _curRenderer = 1;
+			else if (FlxG.keys.pressed("THREE")) _curRenderer = 2;
+			else if (FlxG.keys.pressed("FOUR")) _curRenderer = 3;
+
+			simulate();
 		}
 		
 		private function simulate():void {
@@ -161,33 +116,20 @@ package
 		}
 
 		private function updateSim():void {
-			FlxFluids.Monitors.mark("update.collision_solve");
-			
 			// Solve collisions only for obbs (not particles)
 			collisionSolver.Solve();
 
-			FlxFluids.Monitors.addTimer("update.collision_solve");
-			FlxFluids.Monitors.mark("update.update");
-			
 			// Update particle system
 			particleSystem.Update(Constants.DELTA_TIME_SEC);
 
-			FlxFluids.Monitors.addTimer("update.update");
-			FlxFluids.Monitors.mark("update.collision_solveP");
-			
 			// Interaction handling
 			//AddInteractionForces();
 
 			// Solve collisions only for particles
 			collisionSolver.SolveP(particleSystem.Particles);
 
-			FlxFluids.Monitors.addTimer("update.collision_solveP");
-			FlxFluids.Monitors.mark("update.calculate");
-
 			// Do simulation
 			fluidSim.Calculate(particleSystem.Particles, gravity, Constants.DELTA_TIME_SEC);
-
-			FlxFluids.Monitors.addTimer("update.calculate");
 		}
 
 		//}
@@ -195,89 +137,15 @@ package
 		//{ Drawing
 		
 		override public function render():void {
-			drawParticles(particleSystem.Particles);
+			_renderers[_curRenderer].drawParticles(particleSystem.Particles);
+			_renderers[_curRenderer].render();
 
 			super.render();
 		}
-		
-		private function drawParticles(Particles:FluidParticles):void {
-			var pos:FlxPoint;
-			
-			sprite.fill(0x0);
-			
-			for each (var particle:FluidParticle in Particles.List) {
-				pos = domainToScreen(particle.Position);
-				sprite.draw(pSprite, pos.x - P_RADIUS / 2, pos.y - P_RADIUS / 2);
-			}
-		}
-		
-		private function drawMetaballs(Particles:FluidParticles):void {
-			const radius:Number = 10000;
-			const maxRadius:uint = 10; // pour chaque particle 20x20 pixels pour la metaball
-			var x:int, y:int, i:int;
-			
-			// commencer par vider les valeurs precedentes
-			for (i = 0; i < mbValues.length; i++) {
-				mbValues[i] = 0;
-			}
-			
-			// mettre à jour mbValues
-			for each (var particle:FluidParticle in Particles.List) {
-				var point:FlxPoint = domainToScreen(particle.Position);
-				var px:int = int(point.x);
-				var py:int = int(point.y);
-				for (var xoff:int = -maxRadius; xoff <= maxRadius; xoff++) {
-					for (var yoff:int = -maxRadius; yoff <= maxRadius; yoff++) {
-						x = px + xoff;
-						y = py + yoff;
-						
-						if (x > 0 && x < FlxG.width && y > 0 && y < FlxG.height) {
-							mbValues[x + y * FlxG.width] += radius / (1 + getPixelValue(point, x, y));
-						}
-					}
-				}
-			}
-			
-			// dessiner les metaballs
-			bitmapData.lock();
-			for (x = 0; x < FlxG.width;x++) {
-				for (y = 0; y < FlxG.height; y++) {
-					bitmapData.setPixel(x, y, convertRGBColor(mbValues[x + y * FlxG.width]));
-				}
-			}
-			bitmapData.unlock();
-			//sprite.pixels = bitmapData;
-			//sprite.fill(0xffffff);
-			sprite.frame = 0;
-		}
 
-		private function domainToScreen(vecpos:Vector2):FlxPoint {
-			return new FlxPoint(
-				(vecpos.x - Constants.SIM_DOMAIN.x) * FlxG.width / Constants.SIM_DOMAIN.width,
-				(vecpos.y -Constants.SIM_DOMAIN.y) * FlxG.height / Constants.SIM_DOMAIN.height);
-		}
-
-		private function getPixelValue(pos:FlxPoint, x:uint, y:uint):Number {
-			var py:Number = int((pos.y - y) * (pos.y - y));
-			var px:Number = int((pos.x - x) * (pos.x - x));
-			return px + py;
-		}
-		
-		private function convertRGBColor(pixelsValue:int, count:int = 1):Number {
-			var rgb:int;
-			switch(count% 6) {
-				case 0:    rgb = getRGB(0, pixelsValue/2 , pixelsValue);                    break;
-				case 1:    rgb = getRGB( pixelsValue, pixelsValue / 2, 0);     	            break;
-				case 2:    rgb = getRGB( pixelsValue, pixelsValue/3, pixelsValue/2);        break;	
-				case 3:    rgb = getRGB( pixelsValue/2, pixelsValue*0.8, pixelsValue/5);    break;
-				case 4:    rgb = getRGB( pixelsValue*0.8, pixelsValue/4, pixelsValue/7);    break;
-				case 5:    rgb = getRGB(pixelsValue/6, pixelsValue/3 , pixelsValue*0.8);    break;
-			}
-			return rgb;
-		}
-		
-		public static function getRGB(red : uint , green : uint , blue :uint):uint {
-			return (Math.min(red, 255)<<16 | Math.min(green, 255)<< 8 | Math.min(blue, 255));
+		override public function postProcess():void {
+			_monitors_display.text = FlxFluids.Monitors.toString();
+			super.postProcess();
 		}
 
 		//}
