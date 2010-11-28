@@ -102,6 +102,13 @@ package
 			else if (FlxG.keys.pressed("THREE")) _curRenderer = 2;
 			else if (FlxG.keys.pressed("FOUR")) _curRenderer = 3;
 
+			if (_curRenderer == 3 && FlxG.keys.justPressed("G")) {
+				MBRendererSbat(_renderers[3]).glow = !MBRendererSbat(_renderers[3]).glow;
+			}
+			if (_curRenderer == 3 && FlxG.keys.justPressed("B")) {
+				MBRendererSbat(_renderers[3]).blur = !MBRendererSbat(_renderers[3]).blur;
+			}
+			
 			simulate();
 		}
 		

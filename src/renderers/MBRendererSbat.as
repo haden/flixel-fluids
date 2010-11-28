@@ -1,5 +1,8 @@
 package renderers {
 	import flash.display.BitmapData;
+	import flash.filters.BitmapFilter;
+	import flash.filters.BlurFilter;
+	import flash.filters.GlowFilter;
 	import org.flixel.FlxSprite;
 	import particles.FluidParticle;
 	import particles.FluidParticles;
@@ -12,11 +15,20 @@ package renderers {
 		private var pSprite:FlxSprite;
 		private var bitmapData:BitmapData;
 
+		private var glowFilter:BitmapFilter;
+		private var blurFilter:BitmapFilter;
+		
+		public var glow:Boolean = true;
+		public var blur:Boolean;
+		
 		public function MBRendererSbat(Width:uint, Height:uint, texSize:int) {
 			super(Width, Height);
 
 			initPSprite(texSize);
 			bitmapData = new BitmapData(width, height, true, 0);
+			
+			glowFilter = new GlowFilter(0x808080, 1, 6, 6, 2, 1, true);
+			blurFilter = new BlurFilter(1.3, 1.3, 1);
 		}
 
 		private function initPSprite(radius:int) : void {
@@ -47,7 +59,11 @@ package renderers {
 			}
 
 			bitmapData.threshold(_framePixels, _flashRect, _flashPointZero, ">", 85, 0xffffffff, 255);
-			_framePixels.copyPixels(bitmapData, _flashRect, _flashPointZero);
+			if (glow) bitmapData.applyFilter(bitmapData, _flashRect, _flashPointZero, glowFilter);
+			if (blur) bitmapData.applyFilter(bitmapData, _flashRect, _flashPointZero, blurFilter);
+			
+			_framePixels.fillRect(_flashRect, 0xff808080);
+			_framePixels.copyPixels(bitmapData, _flashRect, _flashPointZero, null, null, true);
 		}
 
 	}
