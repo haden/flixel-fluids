@@ -10,25 +10,27 @@ package renderers {
 	/**
 	 * Renderer based on Sbat's Gluey
 	 */
-	public class MBRendererSbat extends Renderer {
+	public class SbatRenderer extends Renderer {
 
 		private var pSprite:FlxSprite;
 		private var bitmapData:BitmapData;
 
-		private var glowFilter:BitmapFilter;
+		private var glowFilter1:BitmapFilter;
+		private var glowFilter2:BitmapFilter;
 		private var blurFilter:BitmapFilter;
 		
-		public var glow:Boolean = true;
+		public var glow:int = 1; //0 no glow, 1 glowfilter1, 2 glowfilter2
 		public var blur:Boolean;
 		
-		public function MBRendererSbat(Width:uint, Height:uint, texSize:int) {
+		public function SbatRenderer(Width:uint, Height:uint, texSize:int) {
 			super(Width, Height);
 
 			initPSprite(texSize);
 			bitmapData = new BitmapData(width, height, true, 0);
 			
-			glowFilter = new GlowFilter(0x808080, 1, 6, 6, 2, 1, true);
-			blurFilter = new BlurFilter(1.3, 1.3, 1);
+			glowFilter1 = new GlowFilter(0x808080, 1, 6, 6, 2, 1, true);
+			glowFilter2 = new GlowFilter(0x0, 1, 3, 3, 3, 1, true);
+			blurFilter = new BlurFilter(2, 2, 1);
 		}
 
 		private function initPSprite(radius:int) : void {
@@ -59,7 +61,8 @@ package renderers {
 			}
 
 			bitmapData.threshold(_framePixels, _flashRect, _flashPointZero, ">", 85, 0xffffffff, 255);
-			if (glow) bitmapData.applyFilter(bitmapData, _flashRect, _flashPointZero, glowFilter);
+			if (glow == 1) bitmapData.applyFilter(bitmapData, _flashRect, _flashPointZero, glowFilter1);
+			else if (glow == 2) bitmapData.applyFilter(bitmapData, _flashRect, _flashPointZero, glowFilter2);
 			if (blur) bitmapData.applyFilter(bitmapData, _flashRect, _flashPointZero, blurFilter);
 			
 			_framePixels.fillRect(_flashRect, 0xff808080);
