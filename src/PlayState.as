@@ -31,8 +31,7 @@ package
 		
 		private var _renderers:Vector.<Renderer>;
 		private var _curRenderer:int = 3;
-		private var _glowTxt:FlxText;
-		
+
 		//}
 		
 		//{ Initialization
@@ -47,11 +46,8 @@ package
 			_renderers[0] = new MBRenderer0(FlxG.width, FlxG.height, 32, 1.0, 0.4, 0.8);
 			_renderers[1] = new MBRenderer1(FlxG.width, FlxG.height);
 			_renderers[2] = new MBRenderer2(FlxG.width, FlxG.height);
-			_renderers[3] = new SbatRenderer(FlxG.width, FlxG.height, 25);
+			_renderers[3] = new SbatRenderer(FlxG.width, FlxG.height, 20);
 
-			add(_glowTxt = new FlxText(10, 10, 500));
-			_glowTxt.setFormat(null, 12, 0xff0000, null, 0xff000000);
-			
 			initSimulation();
 		}
 
@@ -106,28 +102,7 @@ package
 			else if (FlxG.keys.pressed("THREE")) _curRenderer = 2;
 			else if (FlxG.keys.pressed("FOUR")) _curRenderer = 3;
 
-			var sbatRenderer:SbatRenderer = _renderers[3] as SbatRenderer;
-			if (_curRenderer == 3 && FlxG.keys.justPressed("G")) {
-				sbatRenderer.glow++;
-				if (sbatRenderer.glow > 2) sbatRenderer.glow = 0;
-			}
-			if (_curRenderer == 3 && FlxG.keys.justPressed("B")) {
-				SbatRenderer(_renderers[3]).blur = !SbatRenderer(_renderers[3]).blur;
-			}
-			
 			simulate();
-			
-			if (_curRenderer == 0) {
-				_glowTxt.text = "Drawing a sprite for each particle";
-			} else if (_curRenderer == 1) {
-				_glowTxt.text = "Compute the metaball influence for each pixel for each particle";
-			} else if (_curRenderer == 2) {
-				_glowTxt.text = "Compute the metaball influence only arround each particle";
-			} else if (_curRenderer == 3) {
-				_glowTxt.text = "Sbat's Renderer (based on the game Gluey)\n" +
-					"BLUR: " + (sbatRenderer.blur ? "ON":"OFF") + "\n" +
-					"GLOW: " + (sbatRenderer.glow == 0 ? "OFF":sbatRenderer.glow);
-			}
 		}
 		
 		private function simulate():void {

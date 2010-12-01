@@ -8,7 +8,10 @@ package renderers {
 	public class Renderer extends HakSprite {
 
 		protected var radiusSq:Number;
+		private var _radius:Number;
+		public function get radius():Number { return _radius; }
 		public function set radius(r:Number):void {
+			_radius = r;
 			radiusSq = r * r;
 		}
 

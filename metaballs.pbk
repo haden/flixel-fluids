@@ -1,0 +1,36 @@
+<languageVersion : 1.0;>
+
+kernel NewFilter
+<   namespace : "Your Namespace";
+    vendor : "Your Vendor";
+    version : 1;
+    description : "your description";
+>
+{
+    input image4 src;
+    output pixel4 dst;
+    
+    parameter float alpha1;
+    parameter float alpha2;
+    
+    parameter float4 color1;
+    parameter float4 color2;
+    parameter float4 color3;
+
+    void
+    evaluatePixel()
+    {
+        //alpha1 = 0.38, alpha2 = 0.56
+        // color1=(0,0,0,0), color2=(0,0.33,0.97,1), color3=(0,0,0.7,1)
+
+        dst = sampleNearest(src,outCoord());
+        if (dst.a <= alpha1) {
+            dst.rgba = color1;
+        } else if (dst.a <= alpha2) {
+            dst.rgba = color2;
+        } else {
+            dst.rgba = color3;
+        }
+       
+    }
+}

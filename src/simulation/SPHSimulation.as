@@ -7,12 +7,8 @@ package simulation {
 	import simulation.sks.SKViscosity;
 	import simulation.sks.SmoothingKernel;
 	import utils.Vector2;
-	
-	/**
-	 * ...
-	 * @author Saladin
-	 */
-	public class SPHSimulation{
+
+	public class SPHSimulation {
 
 		private var grid:IndexGrid;
 		

@@ -1,39 +1,42 @@
 package renderers {
 	import flash.display.BitmapData;
+	import flash.display.Shader;
 	import flash.filters.BitmapFilter;
 	import flash.filters.BlurFilter;
 	import flash.filters.GlowFilter;
+	import flash.filters.ShaderFilter;
+	import flash.utils.ByteArray;
 	import org.flixel.FlxSprite;
 	import particles.FluidParticle;
 	import particles.FluidParticles;
+	import flash.display.ShaderPrecision;
 	
 	/**
 	 * Renderer based on Sbat's Gluey
 	 */
 	public class SbatRenderer extends Renderer {
-
+		[Embed(source = '../../metaball.pbj', mimeType = 'application/octet-stream')] static private const PBFilter:Class;
 		private var pSprite:FlxSprite;
-		private var bitmapData:BitmapData;
 
-		private var glowFilter1:BitmapFilter;
-		private var glowFilter2:BitmapFilter;
-		private var blurFilter:BitmapFilter;
-		
-		public var glow:int = 1; //0 no glow, 1 glowfilter1, 2 glowfilter2
-		public var blur:Boolean;
-		
+		private var pbFilter:ShaderFilter;
+
 		public function SbatRenderer(Width:uint, Height:uint, texSize:int) {
 			super(Width, Height);
+			radius = texSize;
 
-			initPSprite(texSize);
-			bitmapData = new BitmapData(width, height, true, 0);
-			
-			glowFilter1 = new GlowFilter(0x808080, 1, 6, 6, 2, 1, true);
-			glowFilter2 = new GlowFilter(0x0, 1, 3, 3, 3, 1, true);
-			blurFilter = new BlurFilter(2, 2, 1);
+			initPSprite();
+
+			var s:Shader = new Shader(new PBFilter());
+			pbFilter = new ShaderFilter(s);
+			pbFilter.shader.data.alpha1.value = [0.38];
+			pbFilter.shader.data.alpha2.value = [0.56];
+			pbFilter.shader.data.color1.value = [0, 0, 0, 0];
+			pbFilter.shader.data.color2.value = [0, 0.33, 0.97, 1];
+			pbFilter.shader.data.color3.value = [0, 0, 0.7, 1];
+			pbFilter.shader.precisionHint = ShaderPrecision.FAST;
 		}
 
-		private function initPSprite(radius:int) : void {
+		private function initPSprite() : void {
 			var size:int = radius * 2;
 			pSprite = new FlxSprite().createGraphic(size, size);
 			var bitmapData:BitmapData = pSprite.pixels;
@@ -51,7 +54,6 @@ package renderers {
 
 		override public function drawParticles(Particles:FluidParticles):void {
 			_framePixels.fillRect(_flashRect, 0);
-			bitmapData.fillRect(_flashRect, 0);
 
 			//iterate through every metaball
 			for each (var particle:FluidParticle in Particles.List) {
@@ -59,14 +61,8 @@ package renderers {
 				var py:Number = yToScreen(particle.position.y);
 				draw(pSprite, px - pSprite.width / 2, py - pSprite.height / 2);
 			}
-
-			bitmapData.threshold(_framePixels, _flashRect, _flashPointZero, ">", 85, 0xffffffff, 255);
-			if (glow == 1) bitmapData.applyFilter(bitmapData, _flashRect, _flashPointZero, glowFilter1);
-			else if (glow == 2) bitmapData.applyFilter(bitmapData, _flashRect, _flashPointZero, glowFilter2);
-			if (blur) bitmapData.applyFilter(bitmapData, _flashRect, _flashPointZero, blurFilter);
 			
-			_framePixels.fillRect(_flashRect, 0xff808080);
-			_framePixels.copyPixels(bitmapData, _flashRect, _flashPointZero, null, null, true);
+			_framePixels.applyFilter(_framePixels, _flashRect, _flashPointZero, pbFilter);
 		}
 
 	}
