@@ -77,8 +77,8 @@ package
 			
 			var emitter:ParticleEmitter = new ParticleEmitter;
 			emitter.Position = new Vector2(Constants.SIM_DOMAIN.x, Constants.SIM_DOMAIN.y);
-			emitter.VelocityMin = Constants.PARTICLE_MASS * 0.30;
-			emitter.VelocityMax = Constants.PARTICLE_MASS * 0.35;
+			emitter.VelocityMin = 1;// Constants.PARTICLE_MASS * 0.30;
+			emitter.VelocityMax = 1.5;// Constants.PARTICLE_MASS * 0.35;
 			emitter.Direction = new Vector2(0.8, -0.25);
 			emitter.Distribution = Constants.SIM_DOMAIN.width * 0.0001;
 			emitter.Frequency = freq;
@@ -102,6 +102,11 @@ package
 			else if (FlxG.keys.pressed("THREE")) _curRenderer = 2;
 			else if (FlxG.keys.pressed("FOUR")) _curRenderer = 3;
 
+			if (_curRenderer == 3) {
+				var sbatr:SbatRenderer = _renderers[3] as SbatRenderer;
+				if (FlxG.keys.justPressed("F")) sbatr.filter++;
+				if (sbatr.filter > 2) sbatr.filter = 0;
+			}
 			simulate();
 		}
 		
