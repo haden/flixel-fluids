@@ -73,6 +73,12 @@ package utils {
 		static public function add(left:Vector2, right:Vector2):Vector2 {
 			return left.Clone().Inc(right);
 		}
+
+		static public function dist(v1:Vector2, v2:Vector2):Number {
+			var dx:Number = v1.x - v2.x;
+			var dy:Number = v1.y - v2.y;
+			return Math.sqrt(dx * dx + dy * dy);
+		}
 		
 		static public function sub(left:Vector2, right:Vector2, out:Vector2 = null):Vector2 {
 			if (!out) out = new Vector2;

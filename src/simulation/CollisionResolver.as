@@ -8,7 +8,6 @@ package simulation {
 	/**
 	 * Solves Collisions
 	 * 
-	 * @author Saladin
 	 */
 	public class CollisionResolver {
 		

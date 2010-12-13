@@ -45,8 +45,12 @@ package renderers {
 			super.render();
 		}
 
-		protected static function getARGB(alpha:uint, red:uint , green:uint , blue:uint):uint {
+		public static function getARGB(alpha:uint, red:uint , green:uint , blue:uint):uint {
 			return (Math.min(alpha, 255) << 24 | Math.min(red, 255) << 16 | Math.min(green, 255) << 8 | Math.min(blue, 255));
+		}
+
+		public static function getRGBf(red:Number, green:Number, blue:Number):uint {
+			return 255<< 24 | (Math.min(red * 255, 255) << 16 | Math.min(green * 255, 255) << 8 | Math.min(blue * 255, 255));
 		}
 		
 	}

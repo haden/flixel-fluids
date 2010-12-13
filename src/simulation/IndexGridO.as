@@ -14,6 +14,8 @@ package simulation {
 	public class IndexGridO extends IndexGrid{
 
 		//{ Properties
+		// TODO neighbors is a Vector.<int> that contains the neighbor information like this:
+		// N, i1, i2,...iN, N', i1',i2',....,iN',...
 		public var neighbors:Vector.<Vector.<int>>;
 
 		//}

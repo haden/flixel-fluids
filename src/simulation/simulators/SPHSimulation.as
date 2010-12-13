@@ -1,14 +1,16 @@
-package simulation {
+package simulation.simulators {
 	import flash.geom.Rectangle;
 	import particles.FluidParticle;
 	import particles.FluidParticles;
+	import simulation.IndexGrid;
+	import simulation.IndexGridO;
 	import simulation.sks.SKPoly6;
 	import simulation.sks.SKSpiky;
 	import simulation.sks.SKViscosity;
 	import simulation.sks.SmoothingKernel;
 	import utils.Vector2;
 
-	public class SPHSimulation {
+	public class SPHSimulation extends Simulation {
 
 		private var grid:IndexGrid;
 		
@@ -51,7 +53,7 @@ package simulation {
 		 * @param	globalForce The global force.
 		 * @param	dTime The time step.
 		 */
-		public function Calculate(Particles:FluidParticles, globalForce:Vector2, dTime:Number):void {
+		override public function Calculate(Particles:FluidParticles, globalForce:Vector2, dTime:Number):void {
 			//FlxFluids.Monitors.mark("sph.calculate.refresh");
 			
 			grid.Refresh(Particles);

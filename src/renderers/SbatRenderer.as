@@ -75,31 +75,28 @@ package renderers {
 			_framePixels.fillRect(_flashRect, 0);
 
 			//iterate through every metaball
-			//_flashRect2.width = pSprite.width;
-			//_flashRect2.height = pSprite.height;
 			_framePixels.lock();
 			for each (var particle:FluidParticle in Particles.List) {
-				var px:Number = xToScreen(particle.position.x);
-				var py:Number = yToScreen(particle.position.y);
-				draw(pSprite, px - pSprite.width / 2, py - pSprite.height / 2);
-				//_flashPoint.x = px - pSprite.width / 2;
-				//_flashPoint.y = py - pSprite.height / 2;
-				//_framePixels.copyPixels(pSprite.pixels, _flashRect2, _flashPoint, null, null, true);
+				drawParticle(particle);
 			}
 			_framePixels.unlock();
-			//_flashRect2.width = width;
-			//_flashRect2.height = height;
-			
+
 			if (filter == 1) {
 				_framePixels.applyFilter(_framePixels, _flashRect, _flashPointZero, pbFilter);
 			} else if (filter == 2) {
 				bitmapData.fillRect(_flashRect, float4ToARGB(color1));
-				bitmapData.threshold(_framePixels, _flashRect, _flashPointZero, ">", Math.floor(alpha1*255), float4ToARGB(color2), 255);
+				bitmapData.threshold(_framePixels, _flashRect, _flashPointZero, ">", Math.floor(alpha1 * 255), float4ToARGB(color2), 255);
 				bitmapData.threshold(_framePixels, _flashRect, _flashPointZero, ">", Math.floor(alpha2 * 255), float4ToARGB(color3), 255);
 				_framePixels.copyPixels(bitmapData, _flashRect, _flashPointZero, null, null, false);
 			}
 		}
 
+		protected function drawParticle(particle:FluidParticle):void {
+			var px:Number = xToScreen(particle.position.x) - pSprite.width / 2;
+			var py:Number = yToScreen(particle.position.y) - pSprite.height / 2;
+			draw(pSprite, px, py);
+		}
+		
 		private function float4ToARGB(color:Array):uint {
 			return Math.floor(color[3] * 255) << 24 | Math.floor(color[0] * 255) << 16 | Math.floor(color[1] * 255) << 8 | Math.floor(color[2] * 255);
 		}

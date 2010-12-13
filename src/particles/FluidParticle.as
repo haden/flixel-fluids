@@ -1,5 +1,6 @@
 package particles {
 	import bounds.PointVolume;
+	import simulation.solvers.LeapFrog;
 	import simulation.solvers.Verlet;
 	import utils.Vector2;
 	import simulation.solvers.Solver;
@@ -30,6 +31,7 @@ package particles {
 		public function get PositionOld():Vector2 { return positionOld; }
 		public function set PositionOld(value:Vector2):void { positionOld.Set(value); }
 
+		//public var half_vel:Vector2 = new Vector2;
 		public var velocity:Vector2 = new Vector2;
 		public function get Velocity():Vector2 { return velocity; }
 		public function set Velocity(value:Vector2):void { velocity.Set(value); }
@@ -55,7 +57,10 @@ package particles {
 			this.Position = pos;
 			this.PositionOld = oldPos;
 			this.Mass = mass;
-			if (vel) this.Velocity = vel;
+			if (vel) {
+				this.Velocity = vel;
+				//half_vel.Set(vel);
+			}
 			this.Density = Constants.DENSITY_OFFSET;
 			// update (integrate) using basic verlet with small drag
 			this.solver = new Verlet(0.01);
@@ -91,7 +96,8 @@ package particles {
 		public function Update(dTime:Number):void {
 			Life++;
 			// integrate
-			solver.Solve(Position, PositionOld, Velocity, Force, Mass, dTime);
+			//solver.Solve(Position, PositionOld, Velocity, Force.Clone(), Mass, dTime);
+			solver.SolveP(this, dTime);
 			// update bounding volume
 			bv.Position = Position;
 		}

@@ -4,6 +4,7 @@ package
 	import flx.HakMonitors;
 	import org.flixel.*;
 	import org.flixel.data.FlxConsole;
+	import pvfs.Particle;
 
 	[SWF(width="512", height="512", backgroundColor="#000000")]
 	[Frame(factoryClass="Preloader")]
@@ -16,6 +17,7 @@ package
 		public static function get Monitors():HakMonitors { return monitors; }
 		
 		public function FlxFluids() {
+			new Particle(0., 0., null, 0, false);
 			super(512, 512, MenuState, 1);
 		}
 		

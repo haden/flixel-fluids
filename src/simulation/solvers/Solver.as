@@ -1,4 +1,5 @@
 package simulation.solvers {
+	import particles.FluidParticle;
 	import utils.Vector2;
 	/**
 	 * ...
@@ -17,6 +18,9 @@ package simulation.solvers {
 		}
 		
 		//{ Methods
+		public function SolveP(particle:FluidParticle, timeStep:Number):void {
+			throw new Error("Not Implemented");
+		}
 		
 		public function SolveA(position:Vector2, positionOld:Vector2, velocity:Vector2, acceleration:Vector2, timeStep:Number):void {
 			throw new Error("Not Implemented");

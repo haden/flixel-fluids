@@ -12,7 +12,7 @@ package {
 		//{ Physic
 
 		public static const GRAVITY:Vector2 = new Vector2(0.0, 9.81);
-		public static const DENSITY_OFFSET:Number = 100;
+		public static const DENSITY_OFFSET:Number = 1000;
 		public static const GAS_K:Number = 0.1;
 		public static const VISC0SITY:Number = 0.02;
 
