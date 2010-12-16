@@ -13,14 +13,16 @@ package pvfs {
 		public var gravity:Number;
 		public var itrsperframe:int;
 		public var particlesize:int;
+		public var rendersize:int;
 		public var emitnumber:int;
 		public var width:int;
 		public var height:int;
 		
 		public function Config() {
 			timestep = 0.1;
-			itrsperframe = 10;
-			particlesize = 6;
+			itrsperframe = 5;
+			particlesize = 10;
+			rendersize = 2;
 			gravity = 0.1;
 			repel = 10;
 			spin = 10;

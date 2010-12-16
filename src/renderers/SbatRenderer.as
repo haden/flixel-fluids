@@ -71,14 +71,12 @@ package renderers {
         }
 		//}
 		
-		override public function drawParticles(Particles:FluidParticles):void {
+		override public function beginDraw():void {
 			_framePixels.fillRect(_flashRect, 0);
-
-			//iterate through every metaball
 			_framePixels.lock();
-			for each (var particle:FluidParticle in Particles.List) {
-				drawParticle(particle);
-			}
+		}
+		
+		override public function endDraw():void {
 			_framePixels.unlock();
 
 			if (filter == 1) {
@@ -91,10 +89,9 @@ package renderers {
 			}
 		}
 
-		protected function drawParticle(particle:FluidParticle):void {
-			var px:Number = xToScreen(particle.position.x) - pSprite.width / 2;
-			var py:Number = yToScreen(particle.position.y) - pSprite.height / 2;
-			draw(pSprite, px, py);
+		public override function drawParticle(x:Number, y:Number, color:uint):void {
+			pSprite.color = color;
+			draw(pSprite, x - pSprite.width / 2, y- pSprite.height / 2);
 		}
 		
 		private function float4ToARGB(color:Array):uint {

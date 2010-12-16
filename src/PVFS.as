@@ -118,7 +118,7 @@
 				//g.moveTo(p.x * 4, p.y * 4);
 				//g.lineTo((4 * (p.x - p.u) + 1), (4 * (p.y - p.v) + 1));
 				g.beginFill(p.c);
-				g.drawCircle(p.posX/* * 4*/, p.posY/* * 4*/, Config.Default.particlesize);
+				g.drawCircle(p.posX/* * 4*/, p.posY/* * 4*/, Config.Default.rendersize);
 				g.endFill();
 				
 				//g.DrawLine(Pens.White, (4F * p.x), (4F * p.y), (4F * (p.x - p.u)), (4F * (p.y - p.v)));

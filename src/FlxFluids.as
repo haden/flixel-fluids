@@ -4,12 +4,10 @@ package
 	import flx.HakMonitors;
 	import org.flixel.*;
 	import org.flixel.data.FlxConsole;
-	import pvfs.Particle;
-
+	import pvfs.Config;
+	
 	[SWF(width="512", height="512", backgroundColor="#000000")]
 	[Frame(factoryClass="Preloader")]
-
-
 
 	public class FlxFluids extends FlxGame
 	{
@@ -17,8 +15,8 @@ package
 		public static function get Monitors():HakMonitors { return monitors; }
 		
 		public function FlxFluids() {
-			new Particle(0., 0., null, 0, false);
-			super(512, 512, MenuState, 1);
+			super(Config.Default.width, Config.Default.height, MenuState, 1);
+			FlxU.seed = 0.5;
 		}
 		
 		override protected function update(event:Event):void {

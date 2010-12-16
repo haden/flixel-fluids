@@ -20,7 +20,7 @@ package  pvfs
 		public var mass:Number;
 		public var c:uint;
 		
-		public function Material(Name:String, k:Number, knear:Number, restDensity:Number, kspring:Number, yieldRatio:Number, yieldRate:Number,
+		public function Material(name:String, k:Number, knear:Number, restDensity:Number, kspring:Number, yieldRatio:Number, yieldRate:Number,
 			yieldWithAge:Number, mass:Number, color:uint) {
 			var timestep:Number = Config.Default.timestep;
 			var tsSq:Number = timestep * timestep;

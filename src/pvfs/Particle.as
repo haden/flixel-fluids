@@ -38,7 +38,7 @@ package  pvfs
         public static var mmb:Boolean;
         public static var mx:int;
         public static var my:int;
-        private var neighbors:Vector.<Neighbor>;
+        public var neighbors:Vector.<Neighbor>;
         public static var nparts:int = 0;
         private var nsize:int;
         public var p:Number;

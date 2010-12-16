@@ -51,15 +51,9 @@ package renderers {
 			bitmap.unlock();
 		}
 
-		override public function drawParticles(Particles:FluidParticles):void {
-			super.drawParticles(Particles);
-			
-			//iterate through every metaball
-			for each (var particle:FluidParticle in Particles.List) {
-				var px:Number = xToScreen(particle.position.x);
-				var py:Number = yToScreen(particle.position.y);
-				draw(pSprite, px - pSprite.width / 2, py - pSprite.height / 2);
-			}
+		override public function drawParticle(x:Number, y:Number, color:uint):void {
+			pSprite.color = color;
+			draw(pSprite, x - pSprite.width / 2, y - pSprite.height / 2);
 		}
 
 	}

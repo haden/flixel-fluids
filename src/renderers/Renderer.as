@@ -24,20 +24,16 @@ package renderers {
 			radius = 20;
 		}
 		
-		public function drawParticles(Particles:FluidParticles):void {
+		public function beginDraw():void {
 			_framePixels.fillRect(_flashRect, 0x0);
 		}
+
+		public function drawParticle(x:Number, y:Number, color:uint):void { }
+		
+		public function endDraw():void { }
 		
 		protected function equation(px:int, py:int, tx:int, ty:int):Number {
 			return radiusSq / ((px - tx) * (px - tx) + (py - ty) * (py - ty));
-		}
-
-		protected function xToScreen(x:Number):Number {
-			return (x - Constants.SIM_DOMAIN.x) * width / Constants.SIM_DOMAIN.width;
-		}
-
-		protected function yToScreen(y:Number):Number {
-			return (y - Constants.SIM_DOMAIN.y) * height / Constants.SIM_DOMAIN.height;
 		}
 
 		override public function render():void {
