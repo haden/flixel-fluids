@@ -16,7 +16,7 @@ package
 		
 		public function FlxFluids() {
 			super(Config.Default.width, Config.Default.height, MenuState, 1);
-			FlxU.seed = 0.5;
+			//FlxU.seed = 0.5;
 		}
 		
 		override protected function update(event:Event):void {

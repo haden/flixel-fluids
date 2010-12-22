@@ -30,6 +30,8 @@ package renderers {
 
 		public function drawParticle(x:Number, y:Number, color:uint):void { }
 		
+		public function drawParticleM(x:Number, y:Number, material:uint):void { }
+		
 		public function endDraw():void { }
 		
 		protected function equation(px:int, py:int, tx:int, ty:int):Number {
@@ -46,7 +48,7 @@ package renderers {
 		}
 
 		public static function getRGBf(red:Number, green:Number, blue:Number):uint {
-			return 255<< 24 | (Math.min(red * 255, 255) << 16 | Math.min(green * 255, 255) << 8 | Math.min(blue * 255, 255));
+			return getARGB(255, red * 255, green * 255, blue * 255);
 		}
 		
 	}

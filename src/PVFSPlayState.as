@@ -23,7 +23,8 @@ package  {
 		
         private var particles:Vector.<Particle> = new Vector.<Particle>();
 
-		private var renderer:Renderer;
+		private var _renderers:Vector.<Renderer>;
+		private var _current:int = 1;
 
 		private var _monitors_display:FlxText;
 		//}
@@ -43,8 +44,9 @@ package  {
 			initMaterials();
 			this.emit = Config.Default.emitnumber;
 
-			//renderer = new SbatRenderer(FlxG.width, FlxG.height, Config.Default.rendersize);
-			renderer = new MBRenderer0(FlxG.width, FlxG.height, Config.Default.rendersize, 1.0, 0.2, 0.8);
+			_renderers = new Vector.<Renderer>();
+			_renderers[0] = new SpriteRenderer(FlxG.width, FlxG.height, materials);
+			_renderers[1] = new MBRenderer0(FlxG.width, FlxG.height, Config.Default.rendersize, 1.0, 0.2, 0.8, materials);
 			//renderer = new SpriteRenderer(FlxG.width, FlxG.height);
 			
 			for (var x:uint = 0; x < 40; x++) {
@@ -57,7 +59,8 @@ package  {
 
 			super.create();
 		}
-				private function initMaterials():void {
+				
+		private function initMaterials():void {
 			materials = new Vector.<Material>();
 			materials.push(new Material("Water", 30, 30, .25, 0, .3, 10, 0, 1, Renderer.getRGBf(0, 0.5, 1)));
 			materials.push(new Material("Oil", 30, 30, .05, 0, .3, 10, 0, .2, Renderer.getRGBf(0, 0, 0)));
@@ -153,6 +156,9 @@ FlxFluids.Monitors.cumul("pvfs.particles.relax");
 		}
 
 		override public function update():void {
+			if (FlxG.keys.pressed("ONE")) _current = 0;
+			else if (FlxG.keys.pressed("TWO")) _current = 1;
+
 			if (FlxG.keys.justPressed("C")) clear();
 
 			updateMouse();
@@ -173,9 +179,11 @@ FlxFluids.Monitors.cumul("pvfs.particles.relax");
 
 		//{ Render
 		override public function render():void {
+			var renderer:Renderer = _renderers[_current];
+			
 			renderer.beginDraw();
 			for each (var particle:Particle in particles) {
-				renderer.drawParticle(particle.posX, particle.posY, particle.c);
+				renderer.drawParticleM(particle.posX, particle.posY, particle.phase);
 			}
 			renderer.endDraw();
 			renderer.render();

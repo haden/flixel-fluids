@@ -5,6 +5,7 @@ package renderers {
 	import flash.display.Sprite;
 	import flash.filters.BlurFilter;
 	import pvfs.Config;
+	import pvfs.Material;
 	import pvfs.Neighbor;
 	import pvfs.Particle;
 	
@@ -16,16 +17,19 @@ package renderers {
 		//private var bitmapData:BitmapData;
 		private var bitmapDataCopy:BitmapData;
 		
+		private var materials:Vector.<Material>; // used to get the color
+		
 		private var blurFilter:BlurFilter = new BlurFilter(10, 10, 2);
 		
 		//private var point:Point = new Point(0, 0);
 
-		public function SpriteRenderer(Width:int, Height:int) {
+		public function SpriteRenderer(Width:int, Height:int, materials:Vector.<Material>) {
 			super(Width, Height);
 			//bitmapData = new BitmapData(Config.Default.width, Config.Default.height, true, 0xFF000000);
 			bitmapDataCopy = new BitmapData(Config.Default.width, Config.Default.height, false, 0xFF000000);
 			
 			//bitmap = new Bitmap(bitmapData, "auto", true);
+			this.materials = materials;
 			
 			fluidG = fluidContainer.graphics;
 		}
@@ -33,6 +37,10 @@ package renderers {
 		override public function beginDraw():void {
 			fluidG.clear();
 			//fluidG.lineStyle(1, 0xFFFFFF);
+		}
+		
+		override public function drawParticleM(x:Number, y:Number, material:uint):void {
+			drawParticle(x, y, materials[material].c);
 		}
 		
 		override public function drawParticle(x:Number, y:Number, color:uint):void {
